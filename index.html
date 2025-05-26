@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Fábrica de Ovos</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #fef8e7;
+    }
+    h1 {
+      color: #e67300;
+    }
+    .container, .loja {
+      margin-top: 30px;
+    }
+    .loja {
+      display: none;
+    }
+    button {
+      margin: 10px;
+      padding: 10px 20px;
+      font-size: 18px;
+      border-radius: 8px;
+      border: none;
+      background-color: #ffa31a;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #ff8000;
+    }
+    .stats {
+      font-size: 20px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🐔 Fábrica de Ovos 🥚</h1>
+
+  <div class="stats">
+    <p>Ovos: <span id="ovos">0</span> 🥚</p>
+    <p>Dinheiro: R$ <span id="dinheiro">0</span> 💰</p>
+    <p>Galinha(s): <span id="galinhas">1</span> 🐔</p>
+    <p>Galinhas Caipiras: <span id="caipiras">0</span> 🐓</p>
+    <p>Galos de Briga: <span id="galos">0</span> 🐓💢</p>
+    <p>Celeiro: Nível <span id="nivelCeleiro">1</span> 🏚️</p>
+  </div>
+
+  <div class="container">
+    <button onclick="produzirOvo()">Botar Ovo 🥚</button>
+    <button onclick="venderOvos()">Vender Ovos 💰</button>
+    <button onclick="toggleLoja()">Loja 🛒</button>
+  </div>
+
+  <div class="loja">
+    <h2>🛍️ Loja</h2>
+    <button onclick="comprarGalinha()">Comprar Galinha 🐔 (R$10)</button>
+    <button onclick="comprarCaipira()">Comprar Galinha Caipira 🐓 (R$100)</button>
+    <button onclick="comprarGalo()">Comprar Galo de Briga 💢 (R$300)</button>
+    <button onclick="evoluirCeleiro()">Evoluir Celeiro 🏡 (R$<span id="precoCeleiro">200</span>)</button>
+    <br><br>
+    <button onclick="toggleLoja()">Voltar 🏠</button>
+  </div>
+
+  <script>
+    // Estado inicial
+    let ovos = 0;
+    let dinheiro = 0;
+    let galinhas = 1;
+    let caipiras = 0;
+    let galos = 0;
+    let nivelCeleiro = 1;
+    let limiteGalinhas = 20;
+
+    function atualizarTela() {
+      document.getElementById('ovos').textContent = ovos;
+      document.getElementById('dinheiro').textContent = dinheiro;
+      document.getElementById('galinhas').textContent = galinhas;
+      document.getElementById('caipiras').textContent = caipiras;
+      document.getElementById('galos').textContent = galos;
+      document.getElementById('nivelCeleiro').textContent = nivelCeleiro;
+      document.getElementById('precoCeleiro').textContent = 200 * nivelCeleiro;
+    }
+
+    function produzirOvo() {
+      let totalProduzido = galinhas + caipiras * 10 + galos * 20;
+      ovos += totalProduzido;
+      atualizarTela();
+    }
+
+    function venderOvos() {
+      dinheiro += ovos;
+      ovos = 0;
+      atualizarTela();
+    }
+
+    function comprarGalinha() {
+      if (dinheiro >= 10) {
+        if (galinhas + caipiras * 10 + galos * 20 >= limiteGalinhas) {
+          alert("Você atingiu o limite do celeiro. Evolua o celeiro para ter mais galinhas!");
+          return;
+        }
+        dinheiro -= 10;
+        galinhas += 1;
+        atualizarTela();
+      } else {
+        alert("Dinheiro insuficiente!");
+      }
+    }
+
+    function comprarCaipira() {
+      if (nivelCeleiro < 5) {
+        alert("Você precisa ter o celeiro no nível 5 para comprar galinhas caipiras!");
+        return;
+      }
+      if (dinheiro >= 100) {
+        if (galinhas + caipiras * 10 + galos * 20 + 10 > limiteGalinhas) {
+          alert("Você atingiu o limite do celeiro!");
+          return;
+        }
+        dinheiro -= 100;
+        caipiras += 1;
+        atualizarTela();
+      } else {
+        alert("Dinheiro insuficiente!");
+      }
+    }
+
+    function comprarGalo() {
+      if (nivelCeleiro < 10) {
+        alert("Você precisa ter o celeiro no nível 10 para comprar galos de briga!");
+        return;
+      }
+      if (dinheiro >= 300) {
+        if (galinhas + caipiras * 10 + galos * 20 + 20 > limiteGalinhas) {
+          alert("Você atingiu o limite do celeiro!");
+          return;
+        }
+        dinheiro -= 300;
+        galos += 1;
+        atualizarTela();
+      } else {
+        alert("Dinheiro insuficiente!");
+      }
+    }
+
+    function evoluirCeleiro() {
+      let preco = 200 * nivelCeleiro;
+      if (dinheiro >= preco) {
+        dinheiro -= preco;
+        nivelCeleiro++;
+        limiteGalinhas *= 2; // dobra a capacidade a cada nível
+        alert("Celeiro evoluído para o nível " + nivelCeleiro + "!");
+        atualizarTela();
+      } else {
+        alert("Dinheiro insuficiente para evoluir o celeiro!");
+      }
+    }
+
+    function toggleLoja() {
+      const container = document.querySelector('.container');
+      const loja = document.querySelector('.loja');
+      if (loja.style.display === 'none') {
+        loja.style.display = 'block';
+        container.style.display = 'none';
+      } else {
+        loja.style.display = 'none';
+        container.style.display = 'block';
+      }
+    }
+
+    // Produção automática reduzida
+    setInterval(() => {
+      let total = galinhas + caipiras * 10 + galos * 20;
+      ovos += Math.floor(total * 0.5); // reduzida
+      atualizarTela();
+    }, 5000); // a cada 5 segundos
+
+    atualizarTela();
+  </script>
+</body>
+</html>
