@@ -1,184 +1,623 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Fábrica de Ovos</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Simulador de Liberdades no Brasil</title>
+  
+  <!-- Fonte Poppins do Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css">
   <style>
+        /* Reset simples */
+    *, *::before, *::after {
+        box-sizing: border-box;
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      background-color: #fef8e7;
+        margin: 0;
+        font-family: 'Poppins', sans-serif;
+        background: #f0f2f5;
+        color: #222;
     }
-    h1 {
-      color: #e67300;
+
+    header {
+        background: #121212;
+        color: #f1c40f;
+        padding: 30px 20px;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        letter-spacing: 2px;
     }
-    .container, .loja {
-      margin-top: 30px;
+
+    nav {
+        background: #181818;
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        padding: 15px 0;
+        box-shadow: inset 0 -2px 5px rgba(0,0,0,0.7);
     }
-    .loja {
-      display: none;
+
+    nav button {
+        background: #333;
+        border: none;
+        color: #f1c40f;
+        padding: 12px 25px;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        transition: background 0.3s ease, transform 0.2s ease;
     }
-    button {
-      margin: 10px;
-      padding: 10px 20px;
-      font-size: 18px;
-      border-radius: 8px;
-      border: none;
-      background-color: #ffa31a;
-      cursor: pointer;
+
+    nav button:hover {
+        background: #f1c40f;
+        color: #121212;
+        transform: scale(1.05);
+        box-shadow: 0 4px 10px #f1c40f;
     }
-    button:hover {
-      background-color: #ff8000;
+
+    .section {
+        max-width: 1100px;
+        margin: 40px auto;
+        padding: 20px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        display: none;
     }
-    .stats {
-      font-size: 20px;
-      margin-top: 20px;
+
+    .section.active {
+        display: block;
+    }
+
+    .section h2 {
+        font-weight: 600;
+        color: #b91c1c;
+        margin-bottom: 25px;
+        border-bottom: 3px solid #f1c40f;
+        padding-bottom: 10px;
+        letter-spacing: 1.5px;
+    }
+    main{
+        display: grid;
+        grid-template-areas: 
+        "noticias"
+        "linha-tempo";
+    }
+    /* Notícias */
+    .noticias {
+        grid-area: noticias;
+        display: grid;
+        grid-template-columns: repeat(auto-fit,minmax(300px,1fr));
+        gap: 25px;
+        grid-template-areas: 
+        "n1 n2 n3"
+        "n4 n5 n6"
+        "n7 none none";
+    }
+
+    #n1{
+        grid-area: n1;
+    }
+    #n2{
+        grid-area: n2;
+    }#n3{
+        grid-area: n3;
+    }#n4{
+        grid-area: n4;
+    }#n5{
+        grid-area: n5;
+    }#n6{
+        grid-area: n6;
+    }#n7{
+        grid-area: n7;
+    }
+    .none{
+        grid-area: none;
+    }
+    .noticia {
+        background: #fff7e6;
+        border-radius: 15px;
+        box-shadow: 0 8px 15px rgba(241,196,15,0.3);
+        padding: 20px;
+        transition: box-shadow 0.3s ease;
+        cursor: pointer;
+    }
+
+    .noticia:hover {
+        box-shadow: 0 15px 30px rgba(241,196,15,0.6);
+    }
+
+    .noticia h3 {
+        margin-top: 0;
+        color: #b91c1c;
+    }
+
+    .noticia p {
+        font-size: 1rem;
+        line-height: 1.4;
+    }
+
+    /* Linha do tempo */
+    .linha-tempo {
+        margin: 50px auto 0;
+        padding: 15px 30px;
+        background: #121212;
+        color: #f1c40f;
+        border-radius: 12px;
+        box-shadow: 0 5px 25px rgba(241,196,15,0.3);
+        width: 1059px
+        
+    }
+
+    .linha-tempo h2 {
+        color: #f1c40f;
+        margin-bottom: 15px;
+    }
+
+    .evento {
+        margin: 15px 0;
+        padding-left: 20px;
+        border-left: 4px solid #f1c40f;
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+
+    /* Ministros */
+    .ministro {
+        display: flex;
+        gap: 25px;
+        background: #fff7e6;
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 30px;
+        box-shadow: 0 8px 15px rgba(241,196,15,0.3);
+        cursor: pointer;
+        transition: box-shadow 0.3s ease;
+    }
+
+    .ministro:hover {
+        box-shadow: 0 15px 30px rgba(241,196,15,0.6);
+    }
+
+    .ministro img {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        border: 3px solid #b91c1c;
+    }
+
+    .ministro div {
+        max-width: 700px;
+    }
+
+    .ministro h3 {
+        margin-top: 0;
+        color: #b91c1c;
+    }
+
+    footer {
+        background: #181818;
+        color: #f1c40f;
+        text-align: center;
+        padding: 30px 20px;
+        letter-spacing: 1px;
+        font-weight: 600;
+        margin-top: 60px;
+        box-shadow: inset 0 4px 10px rgba(241,196,15,0.3);
+    }
+
+    /* MODAL POPUP ESTILIZADO */
+    .popup {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(18,18,18,0.9);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+        z-index: 9999;
+    }
+
+    .popup.show {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .popup-content {
+        background: #fff7e6;
+        border-radius: 15px;
+        padding: 30px 40px;
+        max-width: 600px;
+        width: 90%;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: 0 20px 40px rgba(241,196,15,0.6);
+        transform: scale(0.8);
+        transition: transform 0.3s ease;
+        position: relative;
+    }
+
+    .popup.show .popup-content {
+        transform: scale(1);
+    }
+
+    .popup-content .fechar {
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        background: #b91c1c;
+        color: white;
+        font-weight: 900;
+        border: none;
+        font-size: 24px;
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        cursor: pointer;
+        box-shadow: 0 4px 12px #b91c1c;
+        transition: background 0.3s;
+    }
+
+    .popup-content .fechar:hover {
+        background: #f1c40f;
+        color: #121212;
+        box-shadow: 0 4px 12px #f1c40f;
+    }
+    .curtir-coracao {
+        font-size: 24px;
+        cursor: pointer;
+        user-select: none;
+        margin-top: 12px;
+        transition: transform 0.2s ease;
+        display: inline-block;
+    }
+
+    .heart-icon {
+        display: inline-block;
+        width: 24px;
+        height: 24px;
+        background: url('https://cdn-icons-png.flaticon.com/512/1077/1077035.png') no-repeat  center;
+        background-size: cover;
+        transition: transform 0.3s ease, filter 0.3s ease;
+        filter: grayscale(1) brightness(1.2);
+    }
+
+    .curtir-coracao.curtido .heart-icon {
+        background-image: url('https://cdn-icons-png.flaticon.com/512/833/833472.png');
+        transform: scale(1.2);
+        filter: grayscale(0) brightness(1);
+    }
+    
+    #figuras h2 {
+        font-weight: 600;
+        color: #b91c1c;
+        margin-bottom: 25px;
+        border-bottom: 3px solid #f1c40f;
+        padding-bottom: 10px;
+        letter-spacing: 1.5px;
+    }
+
+    .galeria-figuras {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 25px;
+    }
+
+    .figura {
+        background: #fff7e6;
+        border-radius: 15px;
+        box-shadow: 0 8px 15px rgba(241, 196, 15, 0.3);
+        padding: 20px;
+        display: flex;
+        gap: 15px;
+        align-items: center;
+        transition: box-shadow 0.3s ease;
+    }
+
+    .figura:hover {
+        box-shadow: 0 15px 30px rgba(241, 196, 15, 0.6);
+    }
+
+    .figura img {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #b91c1c;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .figura h3 {
+        margin: 0 0 5px;
+        color: #b91c1c;
+    }
+
+    .figura p {
+        margin: 0;
+        font-size: 0.95rem;
+        line-height: 1.4;
+    }
+
+    .img-noticia {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+        border-radius: 10px;
+        margin-bottom: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
     }
   </style>
 </head>
+
 <body>
-  <h1>🐔 Fábrica de Ovos 🥚</h1>
+  <header>
+    <h1>Simulador de Liberdades no Brasil</h1>
+    <p>Uma visão crítica e consideravelmente irônica do cenário político-judicial brasileiro</p>
+  </header>
 
-  <div class="stats">
-    <p>Ovos: <span id="ovos">0</span> 🥚</p>
-    <p>Dinheiro: R$ <span id="dinheiro">0</span> 💰</p>
-    <p>Galinha(s): <span id="galinhas">1</span> 🐔</p>
-    <p>Galinhas Caipiras: <span id="caipiras">0</span> 🐓</p>
-    <p>Galos de Briga: <span id="galos">0</span> 🐓💢</p>
-    <p>Celeiro: Nível <span id="nivelCeleiro">1</span> 🏚️</p>
+  <nav>
+    <button data-section="inicio">Início</button>
+    <button data-section="ministros" data-popup="ministros">Ministros</button>
+    <button data-section="contato" data-popup="contato">Contato</button>
+    <button data-section="figuras">Figuras</button>
+    <button data-section="sobre">Sobre</button>
+  </nav>
+
+  <main>
+    <!-- Seção Início -->
+    <section class="section active" id="inicio">
+      <h2>⚠️ Notícias Recentes</h2>
+      <div class="noticias">
+        <div class="noticia" tabindex="0" role="article" aria-label="Notícia Alexandre de Moraes manda prender memeiro" id="n1">
+          <h3>Alexandre de Moraes manda prender memeiro</h3>
+          <p>Decisão polêmica do ministro Alexandre de Moraes gera revolta nas redes sociais após prisão de jovem por postar sátiras políticas.</p>
+          <div class="curtir-coracao" data-curtida="false" title="Curtir">
+            <i class="heart-icon"></i>
+          </div>
+        </div>
+        <div class="noticia" tabindex="0" role="article" aria-label="Notícia STF censura conteúdo sobre eleições" id="n2">
+          <h3>STF censura conteúdo sobre eleições</h3>
+          <p>Plataformas são obrigadas a remover postagens críticas ao sistema eleitoral brasileiro sob risco de multa e penalidades.</p>
+          <div class="curtir-coracao" data-curtida="false" title="Curtir">
+            <i class="heart-icon"></i>
+          </div>
+        </div>
+        <div class="noticia" tabindex="0" role="article" aria-label="Notícia Decisão do STF contradiz a Constituição" id="n3">
+          <h3>Decisão do STF contradiz a Constituição</h3>
+          <p>Especialistas apontam incoerência entre decisões recentes do Supremo e direitos garantidos na Carta Magna.</p>
+          <div class="curtir-coracao" data-curtida="false" title="Curtir">
+            <i class="heart-icon"></i>
+          </div>
+        </div>
+        <div class="noticia" tabindex="0" role="article" aria-label="Notícia A luz no fim do túnel era um trem" id="n4">
+          <h3>A luz no fim do túnel era um trem mesmo</h3>
+          <p>Após prometer romper com o sistema, Bolsonaro surpreende apoiadores ao manter alianças com o centrão, sancionar fundo eleitoral bilionário e elogiar ministros do STF, gerando    críticas até de seus eleitores mais fiéis.</p>
+          <div class="curtir-coracao" data-curtida="false" title="Curtir">
+            <i class="heart-icon"></i>
+          </div>
+        </div>
+        <div class="noticia" tabindex="0" role="article" aria-label="Notícia Moraes bloqueia sol por fake news" id="n5">
+          <h3>PT aprova corrupção como patrimônio cultural</h3>
+          <p>Após décadas de escândalos como Mensalão e Petrolão, partido propõe tombar práticas corruptas como parte da identidade nacional. "É nosso legado histórico", declarou um militante entre uma viagem à Cuba e um Pix da JBS.</p>
+          <div class="curtir-coracao" data-curtida="false" title="Curtir">
+            <i class="heart-icon"></i>
+          </div>
+        </div>
+        <div class="noticia" tabindex="0" role="article" aria-label="Notícia STF regulamenta respiração" id="n6">
+          <h3>MBL lança novo curso: Como ser oposição a si mesmo</h3>
+          <p>Grupo que já apoiou Bolsonaro, Doria, Moro e até o PSDB agora ensina técnicas de autoboicote político. Aula bônus: como lacrar na internet enquanto fecha com o Centrão.</p>
+          <div class="curtir-coracao" data-curtida="false" title="Curtir">
+            <i class="heart-icon"></i>
+          </div>
+        </div>
+        <div class="noticia" tabindex="0" role="article" aria-label="MBL trai seu próprio eleitor" id="n7">
+          <h3>Renato do MBL torra R$ 41 mil em canetas e caixas!</h3>
+          <p>Apesar de todo o discurso do MBL nos últimos anos contra o fundo eleitoral, Renato do MBL torra R$41.230,00 em canetas e caixas de papelão. E o melhor: nem foi eleito!</p>
+          <div class="curtir-coracao" data-curtida="false" title="Curtir">
+            <i class="heart-icon"></i>
+          </div>
+        </div>
+      <div class="none"></div>
+      <div class="linha-tempo" aria-label="Linha do tempo de eventos polêmicos do STF">
+        <h2>⏰ Pequena Linha do Tempo</h2>
+        <div class="evento">
+          <strong>2018:</strong> Início das ações contra "fake news" nas eleições.
+        </div>
+        <div class="evento">
+          <strong>2020:</strong> Prisões arbitrárias de jornalistas e influenciadores.
+        </div>
+        <div class="evento">
+          <strong>2022:</strong> Remoções em massa de postagens.
+        </div>
+        <div class="evento">
+          <strong>2024:</strong> Monitoramento direto de redes sociais pela PF.
+        </div>
+      </div>
+    </section>
+
+    <!-- Seção Ministros -->
+    <section class="section" id="ministros">
+      <h2>🥇 Ministros do STF</h2>
+
+      <div class="ministro" tabindex="0" role="region" aria-label="Ministro Alexandre de Moraes">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Alexandre_de_Moraes_em_23_de_maio_de_2017.jpg" alt="Foto do Alexandre de Moraes" />
+        <div>
+          <h3>Alexandre de Moraes</h3>
+          <p>Indicado por Michel Temer em 2017. Atual relator do inquérito das fake news.   Conhecido por decisões polêmicas e atuação autoritária.</p>
+        </div>
+      </div>
+
+      <div class="ministro" tabindex="0" role="region" aria-label="Ministro Gilmar Mendes">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/0/05/Gilmar_Mendes_em_julho_de_2018.jpg" alt="Foto do Gilmar Mendes" />
+        <div>
+          <h3>Gilmar Mendes</h3>
+          <p>Indicado por FHC em 2002. Costuma votar a favor de políticos poderosos e contra  investigações como a Lava Jato. Muito criticado por proteger o sistema.</p>
+        </div>
+      </div>
+
+      <div class="ministro" tabindex="0" role="region" aria-label="Ministro Dias Toffoli">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Dias_Toffoli_em_2015.jpg" alt="Foto do Dias Toffoli" />
+        <div>
+          <h3>Dias Toffoli</h3>
+          <p>Indicado por Lula em 2009. Ex-advogado do PT, anulou provas da Lava Jato e é visto como aliado de interesses políticos.</p>
+        </div>
+      </div>
+
+      <!-- Pode adicionar mais ministros aqui -->
+    </section>
+
+    <section class="section" id="figuras">
+      <h2>🤡 Figuras da Democracia</h2>
+
+      <div class="galeria-figuras">
+        <!--boulos-->
+        <div class="figura">
+          <img src="https://oglobo.globo.com/politica/eleicoes-2024/noticia/2024/09/26/nao-representa-o-que-acredito-como-modelo-de-seguranca-publica-diz-boulos-sobre-politica-de-tarcisio.ghtml" alt="Guilherme Boulos">
+          <div>
+            <h3>Guilherme Boulos</h3>
+            <p>Especialista em ocupações e invasões, defensor da justiça social... com imóveis dos outros. Candidato eterno, mora bem, mas quer você no aluguel coletivo.</p>
+          </div>
+        </div>
+
+      <!-- MAMÃE FALEI -->
+        <div class="figura">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/1/1a/Arthur_do_Val.jpg" alt="Arthur do Val - Mamãe Falei">
+          <div>
+            <h3>Lambecu de Kiev (Mamãe Falei)</h3>
+            <p>Ficou famoso por invadir assembleias e passar vergonha ao vivo. Foi pra Ucrânia “ajudar” e voltou com áudio falando das mulheres — só faltou trazer um capacete de papel alumínio.</p>
+          </div>
+        </div>
+
+      <!--BANANINHA-->
+        <div class="figura">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/e/e3/Eduardo_Bolsonaro_2019.jpg" alt="Eduardo Bolsonaro">
+          <div>
+            <h3>Eduardo Bolsonaro</h3>
+            <p>O diplomata de sofá traidor da pátria e herdeiro político, conhecido por tretas no Twitter, frases infames e pela habilidade de não ser levado a sério nem por aliados.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Seção Contato (exemplo para pop-up) -->
+    <section class="section" id="contato">
+      <h2>Contato</h2>
+      <p>Para mais informações ou sugestões, entre em contato pelo email: carlosziemanns@gmail.com </p>
+    </section>
+
+    <section class="section" id="sobre">
+      <h2>Sobre o Projeto</h2>
+      <p>Este blog é uma iniciativa crítica e irônica para destacar as decisões controversas do antro político-judicial no Brasil. Nosso objetivo é fomentar o debate sobre diversos temas, incluindo liberdade de expressão, censura, corrupção e o papel do STF na democracia brasileira. Ademais, buscamos tecer críticas e comentários sobre figuras públicas que influenciam o cenário político atual.</p>
+    </section>
+  </main>
+
+  <!-- Popup Ministros -->
+  <div id="popup-ministros" class="popup" role="dialog" aria-modal="true" aria-labelledby="popup-ministros-title" aria-describedby="popup-ministros-desc" tabindex="-1">
+    <div class="popup-content">
+      <button class="fechar" aria-label="Fechar popup">&times;</button>
+      <h2 id="popup-ministros-title">Detalhes dos Ministros</h2>
+      <p id="popup-ministros-desc">Uma breve apresentação sobre cada um dos verdadeiros imperadores do Brasil:</p>
+      <ul>
+        <li><strong>Gilmar Mendes: </strong> O decano que coleciona polêmicas dignas de reality show, indicado por FHC em 2002. Já faz 23 anos (aposenta só em 2030). </li>
+        <li><strong>Cármen Lúcia: </strong> Primeira mulher a presidir o STF, com postura tão independente quanto diplomática. Indicação de Lula em 2006, ou seja, 19 anos de tribunal e aposentadoria prevista só em 2029. </li>
+        <li><strong>Dias Toffoli: </strong> O ex-presidente de volta à ativa. Indicado por Lula em 2009, ou seja, já são 16 anos de tribunal; aposentadoria só em 2042. </li>
+        <li><strong>Luiz Fux: </strong> Aquele que parece ter acordado como presidente do STF em todo julgamento polêmico. Indicado por Dilma em 2011, somando 14 anos de Corte; sai só em 2028. </li>
+        <li><strong>Luís Roberto Barroso: </strong> Progressista de praxe, conhecido por puxar debates sobre direitos humanos. Vem desde 2013, indicado por Dilma; 12 anos de STF e se aposenta em 2033. </li>
+        <li><strong>Edson Fachin: </strong> Relator que virou sinônimo de Lava Jato. Indicado por Dilma em 2015, com 10 anos de Corte; aposentadoria em 2033. </li>
+        <li><strong>Alexandre de Moraes: </strong> Aquele que inventou o inquérito das fake news e virou meme jurídico. Indicado por Temer em 2017, com 8 anos de STF e aposentadoria só em 2043. </li> 
+        <li><strong>Nunes Marques: </strong> O “petista declarado” (mentira, indicado por Bolsonaro), na Corte desde 2020 – são 5 anos, e aposentadoria só em 2047. </li>
+        <li><strong>André Mendonça: </strong> O justiceiro conservador do capitólio ministerial. Indicado por Bolsonaro em 2021, com 4 anos no STF e aposentadoria também em 2047. </li>
+        <li><strong>Cristiano Zanin: </strong> A mais nova cara da Corte, ex-advogado de Lula (óbvio). Indicado por Lula em 2023, com apenas 2 anos de STF e aposentadoria em 2050. </li> 
+        <li><strong>Flávio Dino: </strong> Entra para a fama por “modernizar” o tribunal. Indicado por Lula em 2024, com só 1 ano no STF até agora, aposentando-se em 2043. </li>
+      </ul>
+    </div>
   </div>
 
-  <div class="container">
-    <button onclick="produzirOvo()">Botar Ovo 🥚</button>
-    <button onclick="venderOvos()">Vender Ovos 💰</button>
-    <button onclick="toggleLoja()">Loja 🛒</button>
-  </div>
-
-  <div class="loja">
-    <h2>🛍️ Loja</h2>
-    <button onclick="comprarGalinha()">Comprar Galinha 🐔 (R$10)</button>
-    <button onclick="comprarCaipira()">Comprar Galinha Caipira 🐓 (R$100)</button>
-    <button onclick="comprarGalo()">Comprar Galo de Briga 💢 (R$300)</button>
-    <button onclick="evoluirCeleiro()">Evoluir Celeiro 🏡 (R$<span id="precoCeleiro">200</span>)</button>
-    <br><br>
-    <button onclick="toggleLoja()">Voltar 🏠</button>
-  </div>
+  <footer>
+    <p>Projeto crítico e irônico - Simulador de Liberdades no Brasil &copy; 2025</p>
+  </footer>
 
   <script>
-    // Estado inicial
-    let ovos = 0;
-    let dinheiro = 0;
-    let galinhas = 1;
-    let caipiras = 0;
-    let galos = 0;
-    let nivelCeleiro = 1;
-    let limiteGalinhas = 20;
+    // Controle de seções por botões do menu
+    const botoes = document.querySelectorAll("nav button[data-section]");
+    const secoes = document.querySelectorAll(".section");
 
-    function atualizarTela() {
-      document.getElementById('ovos').textContent = ovos;
-      document.getElementById('dinheiro').textContent = dinheiro;
-      document.getElementById('galinhas').textContent = galinhas;
-      document.getElementById('caipiras').textContent = caipiras;
-      document.getElementById('galos').textContent = galos;
-      document.getElementById('nivelCeleiro').textContent = nivelCeleiro;
-      document.getElementById('precoCeleiro').textContent = 200 * nivelCeleiro;
+    botoes.forEach(botao => {
+      botao.addEventListener("click", () => {
+        const destino = botao.getAttribute("data-section");
+        secoes.forEach(sec => sec.classList.remove("active"));
+        document.getElementById(destino).classList.add("active");
+      });
+    });
+
+    // Popups modais
+    document.addEventListener("DOMContentLoaded", () => {
+      // Botões que abrem popups
+      document.querySelectorAll('button[data-popup]').forEach(btn => {
+        btn.addEventListener("click", () => {
+          abrirPopup(btn.getAttribute("data-popup"));
+        });
+      });
+
+      // Botões fechar dentro dos popups
+      document.querySelectorAll(".popup .fechar").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const popup = btn.closest(".popup");
+          fecharPopup(popup.id.replace("popup-", ""));
+        });
+      });
+
+      // Fecha popup clicando fora da caixa de conteúdo
+      document.querySelectorAll(".popup").forEach(popup => {
+        popup.addEventListener("click", (e) => {
+          if (e.target === popup) fecharPopup(popup.id.replace("popup-", ""));
+        });
+      });
+    });
+
+    function abrirPopup(nome) {
+      const popup = document.getElementById(`popup-${nome}`);
+      if (!popup) return console.error("Popup não encontrado:", nome);
+      popup.classList.add("show");
+      document.body.style.overflow = "hidden"; // trava scroll da página
+      popup.focus();
     }
 
-    function produzirOvo() {
-      let totalProduzido = galinhas + caipiras * 10 + galos * 20;
-      ovos += totalProduzido;
-      atualizarTela();
+    function fecharPopup(nome) {
+      const popup = document.getElementById(`popup-${nome}`);
+      if (!popup) return console.error("Popup não encontrado:", nome);
+      popup.classList.remove("show");
+      document.body.style.overflow = ""; // libera scroll da página
     }
 
-    function venderOvos() {
-      dinheiro += ovos;
-      ovos = 0;
-      atualizarTela();
+    // Curtida com coração animado bonito
+    document.addEventListener("DOMContentLoaded", () => {
+      const coracoes = document.querySelectorAll(".curtir-coracao");
+
+    coracoes.forEach((cora, index) => {
+      const key = `curtido_visual_noticia_${index}`;
+      const jaCurtiu = localStorage.getItem(key) === "true";
+
+    if (jaCurtiu) {
+      cora.classList.add("curtido");
     }
 
-    function comprarGalinha() {
-      if (dinheiro >= 10) {
-        if (galinhas + caipiras * 10 + galos * 20 >= limiteGalinhas) {
-          alert("Você atingiu o limite do celeiro. Evolua o celeiro para ter mais galinhas!");
-          return;
-        }
-        dinheiro -= 10;
-        galinhas += 1;
-        atualizarTela();
-      } else {
-        alert("Dinheiro insuficiente!");
-      }
-    }
+      cora.addEventListener("click", () => {
+    if (localStorage.getItem(key) === "true") return;
 
-    function comprarCaipira() {
-      if (nivelCeleiro < 5) {
-        alert("Você precisa ter o celeiro no nível 5 para comprar galinhas caipiras!");
-        return;
-      }
-      if (dinheiro >= 100) {
-        if (galinhas + caipiras * 10 + galos * 20 + 10 > limiteGalinhas) {
-          alert("Você atingiu o limite do celeiro!");
-          return;
-        }
-        dinheiro -= 100;
-        caipiras += 1;
-        atualizarTela();
-      } else {
-        alert("Dinheiro insuficiente!");
-      }
-    }
-
-    function comprarGalo() {
-      if (nivelCeleiro < 10) {
-        alert("Você precisa ter o celeiro no nível 10 para comprar galos de briga!");
-        return;
-      }
-      if (dinheiro >= 300) {
-        if (galinhas + caipiras * 10 + galos * 20 + 20 > limiteGalinhas) {
-          alert("Você atingiu o limite do celeiro!");
-          return;
-        }
-        dinheiro -= 300;
-        galos += 1;
-        atualizarTela();
-      } else {
-        alert("Dinheiro insuficiente!");
-      }
-    }
-
-    function evoluirCeleiro() {
-      let preco = 200 * nivelCeleiro;
-      if (dinheiro >= preco) {
-        dinheiro -= preco;
-        nivelCeleiro++;
-        limiteGalinhas *= 2; // dobra a capacidade a cada nível
-        alert("Celeiro evoluído para o nível " + nivelCeleiro + "!");
-        atualizarTela();
-      } else {
-        alert("Dinheiro insuficiente para evoluir o celeiro!");
-      }
-    }
-
-    function toggleLoja() {
-      const container = document.querySelector('.container');
-      const loja = document.querySelector('.loja');
-      if (loja.style.display === 'none') {
-        loja.style.display = 'block';
-        container.style.display = 'none';
-      } else {
-        loja.style.display = 'none';
-        container.style.display = 'block';
-      }
-    }
-
-    // Produção automática reduzida
-    setInterval(() => {
-      let total = galinhas + caipiras * 10 + galos * 20;
-      ovos += Math.floor(total * 0.5); // reduzida
-      atualizarTela();
-    }, 5000); // a cada 5 segundos
-
-    atualizarTela();
+      cora.classList.add("curtido");
+      localStorage.setItem(key, "true");
+      });
+    });
+    });
   </script>
+
 </body>
 </html>
