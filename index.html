@@ -7,9 +7,8 @@
   
   <!-- Fonte Poppins do Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css">
   <style>
-        /* Reset simples */
+    /* Reset simples */
     *, *::before, *::after {
         box-sizing: border-box;
     }
@@ -19,6 +18,15 @@
         font-family: 'Poppins', sans-serif;
         background: #f0f2f5;
         color: #222;
+    }
+
+    body.modo-claro {
+        background: #ffffff;
+        color: #000;
+    }
+
+    body.modo-claro .section {
+        background: #f8f9fa;
     }
 
     header {
@@ -37,6 +45,7 @@
         gap: 20px;
         padding: 15px 0;
         box-shadow: inset 0 -2px 5px rgba(0,0,0,0.7);
+        flex-wrap: wrap;
     }
 
     nav button {
@@ -48,10 +57,10 @@
         font-weight: 600;
         cursor: pointer;
         box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        transition: background 0.3s ease, transform 0.2s ease;
+        transition: all 0.3s ease;
     }
 
-    nav button:hover {
+    nav button:hover, nav button.ativo {
         background: #f1c40f;
         color: #121212;
         transform: scale(1.05);
@@ -80,53 +89,109 @@
         padding-bottom: 10px;
         letter-spacing: 1.5px;
     }
-    main{
-        display: grid;
-        grid-template-areas: 
-        "noticias"
-        "linha-tempo";
-    }
-    /* Notícias */
-    .noticias {
-        grid-area: noticias;
-        display: grid;
-        grid-template-columns: repeat(auto-fit,minmax(300px,1fr));
-        gap: 25px;
-        grid-template-areas: 
-        "n1 n2 n3"
-        "n4 n5 n6"
-        "n7 none none";
+
+    /* Filtros e Busca */
+    .controles {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        gap: 20px;
+        flex-wrap: wrap;
     }
 
-    #n1{
-        grid-area: n1;
+    .filtros {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
     }
-    #n2{
-        grid-area: n2;
-    }#n3{
-        grid-area: n3;
-    }#n4{
-        grid-area: n4;
-    }#n5{
-        grid-area: n5;
-    }#n6{
-        grid-area: n6;
-    }#n7{
-        grid-area: n7;
+
+    .filtros button {
+        background: #e5e7eb;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
     }
-    .none{
-        grid-area: none;
+
+    .filtros button.ativo, .filtros button:hover {
+        background: #f1c40f;
+        color: #121212;
+        transform: translateY(-2px);
     }
+
+    .busca {
+        display: flex;
+        gap: 5px;
+    }
+
+    .busca input {
+        padding: 10px 15px;
+        border: 2px solid #e5e7eb;
+        border-radius: 20px;
+        outline: none;
+        transition: border-color 0.3s ease;
+        min-width: 200px;
+    }
+
+    .busca input:focus {
+        border-color: #f1c40f;
+    }
+
+    .busca button {
+        background: #f1c40f;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .busca button:hover {
+        background: #e6b800;
+        transform: scale(1.05);
+    }
+
+    /* Toggle modo */
+    .toggle-modo {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #333;
+        color: #f1c40f;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 20px;
+        cursor: pointer;
+        z-index: 1000;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+    }
+
+    .toggle-modo:hover {
+        background: #f1c40f;
+        color: #121212;
+    }
+
+    /* Notícias */
+    .noticias {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 25px;
+        margin-bottom: 30px;
+    }
+
     .noticia {
         background: #fff7e6;
         border-radius: 15px;
         box-shadow: 0 8px 15px rgba(241,196,15,0.3);
         padding: 20px;
-        transition: box-shadow 0.3s ease;
         cursor: pointer;
         position: relative;
-        transform: translateY(0);
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        transform: translateY(0);
     }
 
     .noticia.loading::before {
@@ -135,6 +200,12 @@
         top: 0; left: 0; right: 0; bottom: 0;
         background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
         animation: shimmer 1.5s infinite;
+        border-radius: 15px;
+    }
+
+    @keyframes shimmer {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
     }
 
     .noticia:hover {
@@ -142,31 +213,69 @@
         transform: translateY(-5px);
     }
 
+    .noticia.hidden {
+        display: none;
+    }
+
     .noticia h3 {
         margin-top: 0;
         color: #b91c1c;
+        margin-bottom: 10px;
     }
 
     .noticia p {
         font-size: 1rem;
         line-height: 1.4;
+        margin-bottom: 15px;
+    }
+
+    .noticia-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.85rem;
+        color: #666;
+        margin-top: 10px;
+    }
+
+    .curtir-coracao {
+        cursor: pointer;
+        user-select: none;
+        transition: transform 0.2s ease;
+        display: inline-block;
+    }
+
+    .heart-icon {
+        display: inline-block;
+        width: 24px;
+        height: 24px;
+        background: url('https://cdn-icons-png.flaticon.com/512/1077/1077035.png') no-repeat center;
+        background-size: cover;
+        transition: all 0.3s ease;
+        filter: grayscale(1) brightness(1.2);
+    }
+
+    .curtir-coracao.curtido .heart-icon {
+        background-image: url('https://cdn-icons-png.flaticon.com/512/833/833472.png');
+        transform: scale(1.2);
+        filter: grayscale(0) brightness(1);
     }
 
     /* Linha do tempo */
     .linha-tempo {
-        margin: 50px auto 0;
-        padding: 15px 30px;
+        margin: 30px 0;
+        padding: 25px 30px;
         background: #121212;
         color: #f1c40f;
         border-radius: 12px;
         box-shadow: 0 5px 25px rgba(241,196,15,0.3);
-        width: min(1059px, 90%);
-        
     }
 
     .linha-tempo h2 {
         color: #f1c40f;
-        margin-bottom: 15px;
+        margin-bottom: 20px;
+        border-bottom: 3px solid #f1c40f;
+        padding-bottom: 10px;
     }
 
     .evento {
@@ -187,11 +296,12 @@
         margin-bottom: 30px;
         box-shadow: 0 8px 15px rgba(241,196,15,0.3);
         cursor: pointer;
-        transition: box-shadow 0.3s ease;
+        transition: all 0.3s ease;
     }
 
     .ministro:hover {
         box-shadow: 0 15px 30px rgba(241,196,15,0.6);
+        transform: translateY(-3px);
     }
 
     .ministro img {
@@ -212,18 +322,50 @@
         color: #b91c1c;
     }
 
-    footer {
-        background: #181818;
-        color: #f1c40f;
-        text-align: center;
-        padding: 30px 20px;
-        letter-spacing: 1px;
-        font-weight: 600;
-        margin-top: 60px;
-        box-shadow: inset 0 4px 10px rgba(241,196,15,0.3);
+    /* Figuras */
+    .galeria-figuras {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 25px;
     }
 
-    /* MODAL POPUP ESTILIZADO */
+    .figura {
+        background: #fff7e6;
+        border-radius: 15px;
+        box-shadow: 0 8px 15px rgba(241, 196, 15, 0.3);
+        padding: 20px;
+        display: flex;
+        gap: 15px;
+        align-items: center;
+        transition: all 0.3s ease;
+    }
+
+    .figura:hover {
+        box-shadow: 0 15px 30px rgba(241, 196, 15, 0.6);
+        transform: translateY(-3px);
+    }
+
+    .figura img {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #b91c1c;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .figura h3 {
+        margin: 0 0 5px;
+        color: #b91c1c;
+    }
+
+    .figura p {
+        margin: 0;
+        font-size: 0.95rem;
+        line-height: 1.4;
+    }
+
+    /* MODAL POPUP */
     .popup {
         position: fixed;
         top: 0; left: 0; right: 0; bottom: 0;
@@ -274,7 +416,7 @@
         border-radius: 50%;
         cursor: pointer;
         box-shadow: 0 4px 12px #b91c1c;
-        transition: background 0.3s;
+        transition: all 0.3s ease;
     }
 
     .popup-content .fechar:hover {
@@ -282,188 +424,204 @@
         color: #121212;
         box-shadow: 0 4px 12px #f1c40f;
     }
-    .curtir-coracao {
-        font-size: 24px;
-        cursor: pointer;
-        user-select: none;
-        margin-top: 12px;
-        transition: transform 0.2s ease;
-        display: inline-block;
-    }
 
-    .heart-icon {
-        display: inline-block;
-        width: 24px;
-        height: 24px;
-        background: url('https://cdn-icons-png.flaticon.com/512/1077/1077035.png') no-repeat  center;
-        background-size: cover;
-        transition: transform 0.3s ease, filter 0.3s ease;
-        filter: grayscale(1) brightness(1.2);
-    }
-
-    .curtir-coracao.curtido .heart-icon {
-        background-image: url('https://cdn-icons-png.flaticon.com/512/833/833472.png');
-        transform: scale(1.2);
-        filter: grayscale(0) brightness(1);
-    }
-    
-    #figuras h2 {
-        font-weight: 600;
-        color: #b91c1c;
-        margin-bottom: 25px;
-        border-bottom: 3px solid #f1c40f;
-        padding-bottom: 10px;
-        letter-spacing: 1.5px;
-    }
-
-    .galeria-figuras {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 25px;
-    }
-
-    .figura {
-        background: #fff7e6;
-        border-radius: 15px;
-        box-shadow: 0 8px 15px rgba(241, 196, 15, 0.3);
-        padding: 20px;
+    /* Compartilhamento */
+    .compartilhar {
         display: flex;
-        gap: 15px;
-        align-items: center;
-        transition: box-shadow 0.3s ease;
+        gap: 10px;
+        justify-content: center;
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 2px solid #f1c40f;
     }
 
-    .figura:hover {
-        box-shadow: 0 15px 30px rgba(241, 196, 15, 0.6);
-    }
-
-    .figura img {
-        width: 80px;
-        height: 80px;
+    .compartilhar button {
+        background: #333;
+        border: none;
+        color: white;
+        padding: 10px 15px;
         border-radius: 50%;
-        object-fit: cover;
-        border: 3px solid #b91c1c;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        cursor: pointer;
+        font-size: 18px;
+        transition: all 0.3s ease;
     }
 
-    .figura h3 {
-        margin: 0 0 5px;
-        color: #b91c1c;
+    .compartilhar button:hover {
+        background: #f1c40f;
+        transform: scale(1.1);
     }
 
-    .figura p {
-        margin: 0;
-        font-size: 0.95rem;
-        line-height: 1.4;
-    }
-
-    .img-noticia {
-        width: 100%;
-        height: 180px;
-        object-fit: cover;
-        border-radius: 10px;
-        margin-bottom: 12px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-    }
-    @media (max-width: 768px) {
-    .noticias {
-        grid-template-columns: 1fr;
-        grid-template-areas: 
-            "n1" "n2" "n3" "n4" "n5" "n6" "n7";
-    }
-    
-    .ministro {
-        flex-direction: column;
+    footer {
+        background: #181818;
+        color: #f1c40f;
         text-align: center;
+        padding: 30px 20px;
+        letter-spacing: 1px;
+        font-weight: 600;
+        margin-top: 60px;
+        box-shadow: inset 0 4px 10px rgba(241,196,15,0.3);
     }
+
+    /* Responsividade */
+    @media (max-width: 768px) {
+        .noticias {
+            grid-template-columns: 1fr;
+        }
+        
+        .ministro {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .controles {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .busca input {
+            min-width: 150px;
+        }
+
+        nav {
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        nav button {
+            padding: 10px 15px;
+            font-size: 0.9rem;
+        }
     }
-    
+
+    /* Sem resultados */
+    .sem-resultados {
+        text-align: center;
+        padding: 40px 20px;
+        color: #666;
+        font-style: italic;
+    }
   </style>
 </head>
 
 <body>
+  <button class="toggle-modo" onclick="toggleModo()">🌓 Modo</button>
+
   <header>
     <h1>Simulador de Liberdades no Brasil</h1>
     <p>Uma visão crítica e consideravelmente irônica do cenário político-judicial brasileiro</p>
   </header>
 
   <nav>
-    <button data-section="inicio">Início</button>
+    <button data-section="inicio" class="ativo">Início</button>
     <button data-section="ministros" data-popup="ministros">Ministros</button>
-    <button data-section="contato" data-popup="contato">Contato</button>
     <button data-section="figuras">Figuras</button>
     <button data-section="sobre">Sobre</button>
+    <button data-section="contato" data-popup="contato">Contato</button>
   </nav>
 
   <main>
-    <!-- Adicionar no topo das notícias -->
-    <div class="filtros">
-      <button data-filtro="stf">STF</button>
-      <button data-filtro="politicos">Políticos</button>
-      <button data-filtro="censura">Censura</button>
-      <button data-filtro="todos" class="ativo">Todos</button>
-    </div>
-
-    <div class="busca">
-      <input type="text" placeholder="Buscar notícias..." id="campoBusca">
-      <button onclick="buscarNoticias()">🔍</button>
-    </div>
-    
     <!-- Seção Início -->
     <section class="section active" id="inicio">
       <h2>⚠️ Notícias Recentes</h2>
+      
+      <div class="controles">
+        <div class="filtros">
+          <button data-filtro="todos" class="ativo">Todos</button>
+          <button data-filtro="stf">STF</button>
+          <button data-filtro="politicos">Políticos</button>
+          <button data-filtro="censura">Censura</button>
+        </div>
+
+        <div class="busca">
+          <input type="text" placeholder="Buscar notícias..." id="campoBusca">
+          <button onclick="buscarNoticias()">🔍</button>
+        </div>
+      </div>
+
       <div class="noticias">
-        <div class="noticia" tabindex="0" role="article" aria-label="Notícia Alexandre de Moraes manda prender memeiro" id="n1">
+        <div class="noticia" data-categoria="censura stf" data-views="0">
           <h3>Alexandre de Moraes manda prender memeiro</h3>
           <p>Decisão polêmica do ministro Alexandre de Moraes gera revolta nas redes sociais após prisão de jovem por postar sátiras políticas.</p>
-          <div class="curtir-coracao" data-curtida="false" title="Curtir">
-            <i class="heart-icon"></i>
+          <div class="noticia-meta">
+            <span class="views">0 visualizações</span>
+            <div class="curtir-coracao" data-curtida="false" title="Curtir">
+              <span class="heart-icon"></span>
+            </div>
           </div>
         </div>
-        <div class="noticia" tabindex="0" role="article" aria-label="Notícia STF censura conteúdo sobre eleições" id="n2">
+
+        <div class="noticia" data-categoria="censura stf" data-views="0">
           <h3>STF censura conteúdo sobre eleições</h3>
           <p>Plataformas são obrigadas a remover postagens críticas ao sistema eleitoral brasileiro sob risco de multa e penalidades.</p>
-          <div class="curtir-coracao" data-curtida="false" title="Curtir">
-            <i class="heart-icon"></i>
+          <div class="noticia-meta">
+            <span class="views">0 visualizações</span>
+            <div class="curtir-coracao" data-curtida="false" title="Curtir">
+              <span class="heart-icon"></span>
+            </div>
           </div>
         </div>
-        <div class="noticia" tabindex="0" role="article" aria-label="Notícia Decisão do STF contradiz a Constituição" id="n3">
+
+        <div class="noticia" data-categoria="stf" data-views="0">
           <h3>Decisão do STF contradiz a Constituição</h3>
           <p>Especialistas apontam incoerência entre decisões recentes do Supremo e direitos garantidos na Carta Magna.</p>
-          <div class="curtir-coracao" data-curtida="false" title="Curtir">
-            <i class="heart-icon"></i>
+          <div class="noticia-meta">
+            <span class="views">0 visualizações</span>
+            <div class="curtir-coracao" data-curtida="false" title="Curtir">
+              <span class="heart-icon"></span>
+            </div>
           </div>
         </div>
-        <div class="noticia" tabindex="0" role="article" aria-label="Notícia A luz no fim do túnel era um trem" id="n4">
+
+        <div class="noticia" data-categoria="politicos" data-views="0">
           <h3>A luz no fim do túnel era um trem mesmo</h3>
-          <p>Após prometer romper com o sistema, Bolsonaro surpreende apoiadores ao manter alianças com o centrão, sancionar fundo eleitoral bilionário e elogiar ministros do STF, gerando    críticas até de seus eleitores mais fiéis.</p>
-          <div class="curtir-coracao" data-curtida="false" title="Curtir">
-            <i class="heart-icon"></i>
+          <p>Após prometer romper com o sistema, Bolsonaro surpreende apoiadores ao manter alianças com o centrão, sancionar fundo eleitoral bilionário e elogiar ministros do STF.</p>
+          <div class="noticia-meta">
+            <span class="views">0 visualizações</span>
+            <div class="curtir-coracao" data-curtida="false" title="Curtir">
+              <span class="heart-icon"></span>
+            </div>
           </div>
         </div>
-        <div class="noticia" tabindex="0" role="article" aria-label="Notícia Moraes bloqueia sol por fake news" id="n5">
+
+        <div class="noticia" data-categoria="politicos" data-views="0">
           <h3>PT aprova corrupção como patrimônio cultural</h3>
-          <p>Após décadas de escândalos como Mensalão e Petrolão, partido propõe tombar práticas corruptas como parte da identidade nacional. "É nosso legado histórico", declarou um militante entre uma viagem à Cuba e um Pix da JBS.</p>
-          <div class="curtir-coracao" data-curtida="false" title="Curtir">
-            <i class="heart-icon"></i>
+          <p>Após décadas de escândalos como Mensalão e Petrolão, partido propõe tombar práticas corruptas como parte da identidade nacional.</p>
+          <div class="noticia-meta">
+            <span class="views">0 visualizações</span>
+            <div class="curtir-coracao" data-curtida="false" title="Curtir">
+              <span class="heart-icon"></span>
+            </div>
           </div>
         </div>
-        <div class="noticia" tabindex="0" role="article" aria-label="Notícia STF regulamenta respiração" id="n6">
-          <h3>MBL lança novo curso: Como ser oposição a si mesmo</h3>
-          <p>Grupo que já apoiou Bolsonaro, Doria, Moro e até o PSDB agora ensina técnicas de autoboicote político. Aula bônus: como lacrar na internet enquanto fecha com o Centrão.</p>
-          <div class="curtir-coracao" data-curtida="false" title="Curtir">
-            <i class="heart-icon"></i>
+
+        <div class="noticia" data-categoria="politicos" data-views="0">
+          <h3>MBL lança curso: Como ser oposição a si mesmo</h3>
+          <p>Grupo que já apoiou Bolsonaro, Doria, Moro e até o PSDB agora ensina técnicas de autoboicote político.</p>
+          <div class="noticia-meta">
+            <span class="views">0 visualizações</span>
+            <div class="curtir-coracao" data-curtida="false" title="Curtir">
+              <span class="heart-icon"></span>
+            </div>
           </div>
         </div>
-        <div class="noticia" tabindex="0" role="article" aria-label="MBL trai seu próprio eleitor" id="n7">
-          <h3>Renato do MBL torra R$ 41 mil em canetas e caixas!</h3>
-          <p>Apesar de todo o discurso do MBL nos últimos anos contra o fundo eleitoral, Renato do MBL torra R$41.230,00 em canetas e caixas de papelão. E o melhor: nem foi eleito!</p>
-          <div class="curtir-coracao" data-curtida="false" title="Curtir">
-            <i class="heart-icon"></i>
+
+        <div class="noticia" data-categoria="politicos" data-views="0">
+          <h3>Renato do MBL torra R$ 41 mil em canetas!</h3>
+          <p>Apesar de todo o discurso contra o fundo eleitoral, Renato torra R$41.230,00 em canetas e caixas de papelão. E o melhor: nem foi eleito!</p>
+          <div class="noticia-meta">
+            <span class="views">0 visualizações</span>
+            <div class="curtir-coracao" data-curtida="false" title="Curtir">
+              <span class="heart-icon"></span>
+            </div>
           </div>
         </div>
-      <div class="none"></div>
-      <div class="linha-tempo" aria-label="Linha do tempo de eventos polêmicos do STF">
+      </div>
+
+      <div class="sem-resultados" style="display: none;">
+        <p>Nenhuma notícia encontrada com os filtros aplicados.</p>
+      </div>
+
+      <div class="linha-tempo">
         <h2>⏰ Pequena Linha do Tempo</h2>
         <div class="evento">
           <strong>2018:</strong> Início das ações contra "fake news" nas eleições.
@@ -484,142 +642,161 @@
     <section class="section" id="ministros">
       <h2>🥇 Ministros do STF</h2>
 
-      <div class="ministro" tabindex="0" role="region" aria-label="Ministro Alexandre de Moraes">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Alexandre_de_Moraes_em_23_de_maio_de_2017.jpg" alt="Foto do Alexandre de Moraes" />
+      <div class="ministro">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Alexandre_de_Moraes_em_23_de_maio_de_2017.jpg" alt="Alexandre de Moraes" />
         <div>
           <h3>Alexandre de Moraes</h3>
-          <p>Indicado por Michel Temer em 2017. Atual relator do inquérito das fake news.   Conhecido por decisões polêmicas e atuação autoritária.</p>
+          <p>Indicado por Michel Temer em 2017. Atual relator do inquérito das fake news. Conhecido por decisões polêmicas e atuação autoritária.</p>
         </div>
       </div>
 
-      <div class="ministro" tabindex="0" role="region" aria-label="Ministro Gilmar Mendes">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/0/05/Gilmar_Mendes_em_julho_de_2018.jpg" alt="Foto do Gilmar Mendes" />
+      <div class="ministro">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/0/05/Gilmar_Mendes_em_julho_de_2018.jpg" alt="Gilmar Mendes" />
         <div>
           <h3>Gilmar Mendes</h3>
-          <p>Indicado por FHC em 2002. Costuma votar a favor de políticos poderosos e contra  investigações como a Lava Jato. Muito criticado por proteger o sistema.</p>
+          <p>Indicado por FHC em 2002. Costuma votar a favor de políticos poderosos e contra investigações como a Lava Jato. Muito criticado por proteger o sistema.</p>
         </div>
       </div>
 
-      <div class="ministro" tabindex="0" role="region" aria-label="Ministro Dias Toffoli">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Dias_Toffoli_em_2015.jpg" alt="Foto do Dias Toffoli" />
+      <div class="ministro">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Dias_Toffoli_em_2015.jpg" alt="Dias Toffoli" />
         <div>
           <h3>Dias Toffoli</h3>
           <p>Indicado por Lula em 2009. Ex-advogado do PT, anulou provas da Lava Jato e é visto como aliado de interesses políticos.</p>
         </div>
       </div>
-
-      <!-- Pode adicionar mais ministros aqui -->
     </section>
 
+    <!-- Seção Figuras -->
     <section class="section" id="figuras">
       <h2>🤡 Figuras da Democracia</h2>
 
       <div class="galeria-figuras">
-        <!--boulos-->
         <div class="figura">
-          <img src="https://oglobo.globo.com/politica/eleicoes-2024/noticia/2024/09/26/nao-representa-o-que-acredito-como-modelo-de-seguranca-publica-diz-boulos-sobre-politica-de-tarcisio.ghtml" alt="Guilherme Boulos">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Guilherme_Boulos_2024.jpg/440px-Guilherme_Boulos_2024.jpg" alt="Guilherme Boulos">
           <div>
             <h3>Guilherme Boulos</h3>
             <p>Especialista em ocupações e invasões, defensor da justiça social... com imóveis dos outros. Candidato eterno, mora bem, mas quer você no aluguel coletivo.</p>
           </div>
         </div>
 
-      <!-- MAMÃE FALEI -->
         <div class="figura">
           <img src="https://upload.wikimedia.org/wikipedia/commons/1/1a/Arthur_do_Val.jpg" alt="Arthur do Val - Mamãe Falei">
           <div>
             <h3>Lambecu de Kiev (Mamãe Falei)</h3>
-            <p>Ficou famoso por invadir assembleias e passar vergonha ao vivo. Foi pra Ucrânia “ajudar” e voltou com áudio falando das mulheres — só faltou trazer um capacete de papel alumínio.</p>
+            <p>Ficou famoso por invadir assembleias e passar vergonha ao vivo. Foi pra Ucrânia "ajudar" e voltou com áudio falando das mulheres.</p>
           </div>
         </div>
 
-      <!--BANANINHA-->
         <div class="figura">
           <img src="https://upload.wikimedia.org/wikipedia/commons/e/e3/Eduardo_Bolsonaro_2019.jpg" alt="Eduardo Bolsonaro">
           <div>
             <h3>Eduardo Bolsonaro</h3>
-            <p>O diplomata de sofá traidor da pátria e herdeiro político, conhecido por tretas no Twitter, frases infames e pela habilidade de não ser levado a sério nem por aliados.</p>
+            <p>O diplomata de sofá traidor da pátria e herdeiro político, conhecido por tretas no Twitter, frases infames e pela habilidade de não ser levado a sério.</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Seção Contato (exemplo para pop-up) -->
-    <section class="section" id="contato">
-      <h2>Contato</h2>
-      <p>Para mais informações ou sugestões, entre em contato pelo email: carlosziemanns@gmail.com </p>
-    </section>
-
+    <!-- Seção Sobre -->
     <section class="section" id="sobre">
       <h2>Sobre o Projeto</h2>
-      <p>Este blog é uma iniciativa crítica e irônica para destacar as decisões controversas do antro político-judicial no Brasil. Nosso objetivo é fomentar o debate sobre diversos temas, incluindo liberdade de expressão, censura, corrupção e o papel do STF na democracia brasileira. Ademais, buscamos tecer críticas e comentários sobre figuras públicas que influenciam o cenário político atual.</p>
+      <p>Este blog é uma iniciativa crítica e irônica para destacar as decisões controversas do antro político-judicial no Brasil. Nosso objetivo é fomentar o debate sobre diversos temas, incluindo liberdade de expressão, censura, corrupção e o papel do STF na democracia brasileira.</p>
+      <p>Buscamos tecer críticas e comentários sobre figuras públicas que influenciam o cenário político atual, sempre mantendo um tom satírico mas fundamentado.</p>
+    </section>
+
+    <!-- Seção Contato -->
+    <section class="section" id="contato">
+      <h2>Contato</h2>
+      <p>Para mais informações ou sugestões, entre em contato pelo email: <strong>carlosziemanns@gmail.com</strong></p>
+      <p>Siga-nos nas redes sociais para mais conteúdo crítico e análises políticas.</p>
     </section>
   </main>
 
   <!-- Popup Ministros -->
-<div id="popup-ministros" class="popup" role="dialog" aria-modal="true" aria-labelledby="popup-ministros-title" aria-describedby="popup-ministros-desc" tabindex="-1">
-  <div class="popup-content">
-    <button class="fechar" aria-label="Fechar popup">&times;</button>
-    <h2 id="popup-ministros-title">Ministros do Supremo Tribunal Federal</h2>
-    <p id="popup-ministros-desc">Composição atual da Suprema Corte brasileira (2025):</p>
-    <ul>
-      <li><strong>Gilmar Mendes:</strong> Decano da Corte, indicado por Fernando Henrique Cardoso em 2002. Aposentadoria compulsória em maio de 2030.</li>
-        
-      <li><strong>Cármen Lúcia:</strong> Primeira mulher a presidir o STF, indicada por Lula em 2006. Aposentadoria compulsória em abril de 2029.</li>
-        
-      <li><strong>Dias Toffoli:</strong> Ex-presidente do STF, indicado por Lula em 2009. Aposentadoria compulsória em novembro de 2042.</li>
-        
-      <li><strong>Luiz Fux:</strong> Próximo a se aposentar por idade, indicado por Dilma Rousseff em 2011. Aposentadoria compulsória em 2028.</li>
-        
-      <li><strong>Luís Roberto Barroso:</strong> Atual presidente do STF, indicado por Dilma Rousseff em 2013. Aposentadoria compulsória em março de 2033.</li>
-        
-      <li><strong>Edson Fachin:</strong> Relator de importantes casos da Lava Jato, indicado por Dilma Rousseff em 2015. Aposentadoria compulsória em junho de 2033.</li>
-        
-      <li><strong>Alexandre de Moraes:</strong> Conhecido pelo inquérito das fake news, indicado por Michel Temer em 2017. Aposentadoria compulsória em dezembro de 2042.</li>
-        
-      <li><strong>Kassio Nunes Marques:</strong> Indicado por Jair Bolsonaro em 2020. Aposentadoria compulsória em dezembro de 2047.</li>
-        
-      <li><strong>André Mendonça:</strong> O "terrivelmente evangélico", indicado por Jair Bolsonaro em 2021. Aposentadoria compulsória em setembro de 2047.</li>
-        
-      <li><strong>Cristiano Zanin:</strong> Ex-advogado de Lula, indicado por Lula em 2023. Aposentadoria compulsória em maio de 2050.</li>
-        
-      <li><strong>Flávio Dino:</strong> Mais recente ministro, indicado por Lula em 2024 para substituir Rosa Weber. Aposentadoria compulsória em julho de 2043.</li>
-    </ul>
+  <div id="popup-ministros" class="popup" role="dialog" aria-modal="true">
+    <div class="popup-content">
+      <button class="fechar" aria-label="Fechar popup">&times;</button>
+      <h2>Ministros do Supremo Tribunal Federal</h2>
+      <p>Composição atual da Suprema Corte brasileira (2025):</p>
+      <ul>
+        <li><strong>Gilmar Mendes:</strong> Decano da Corte, indicado por FHC em 2002. Aposentadoria em maio de 2030.</li>
+        <li><strong>Cármen Lúcia:</strong> Primeira mulher a presidir o STF, indicada por Lula em 2006. Aposentadoria em abril de 2029.</li>
+        <li><strong>Dias Toffoli:</strong> Ex-presidente do STF, indicado por Lula em 2009. Aposentadoria em novembro de 2042.</li>
+        <li><strong>Luiz Fux:</strong> Próximo a se aposentar, indicado por Dilma em 2011. Aposentadoria em 2028.</li>
+        <li><strong>Luís Roberto Barroso:</strong> Atual presidente do STF, indicado por Dilma em 2013. Aposentadoria em março de 2033.</li>
+        <li><strong>Edson Fachin:</strong> Relator da Lava Jato, indicado por Dilma em 2015. Aposentadoria em junho de 2033.</li>
+        <li><strong>Alexandre de Moraes:</strong> Conhecido pelo inquérito das fake news, indicado por Temer em 2017. Aposentadoria em dezembro de 2042.</li>
+        <li><strong>Kassio Nunes Marques:</strong> Indicado por Bolsonaro em 2020. Aposentadoria em dezembro de 2047.</li>
+        <li><strong>André Mendonça:</strong> O "terrivelmente evangélico", indicado por Bolsonaro em 2021. Aposentadoria em setembro de 2047.</li>
+        <li><strong>Cristiano Zanin:</strong> Ex-advogado de Lula, indicado por Lula em 2023. Aposentadoria em maio de 2050.</li>
+        <li><strong>Flávio Dino:</strong> Mais recente ministro, indicado por Lula em 2024. Aposentadoria em julho de 2043.</li>
+      </ul>
       
-    <p><small><strong>Observação:</strong> A aposentadoria compulsória no STF ocorre aos 75 anos de idade. As datas são aproximadas baseadas no aniversário de cada ministro.</small></p>
+      <div class="compartilhar">
+        <button onclick="compartilhar('whatsapp')" title="Compartilhar no WhatsApp">📱</button>
+        <button onclick="compartilhar('twitter')" title="Twitter">🐦</button>
+        <button onclick="compartilhar('facebook')" title="Facebook">📘</button>
+      </div>
+    </div>
   </div>
 
-  <div class="compartilhar">
-    <button onclick="compartilhar('whatsapp')">📱</button>
-    <button onclick="compartilhar('twitter')">🐦</button>
-    <button onclick="compartilhar('facebook')">📘</button>
-  </div>
-  
   <footer>
     <p>Projeto crítico e irônico - Simulador de Liberdades no Brasil &copy; 2025</p>
+    <p>Todas as opiniões são baseadas em fatos públicos e análises críticas do cenário político nacional.</p>
   </footer>
 
   <script>
+    // Sistema de Analytics Simples
+    const analytics = {
+      trackEvent: (categoria, acao, rotulo) => {
+        const eventos = JSON.parse(localStorage.getItem('eventos') || '[]');
+        eventos.push({
+          categoria, acao, rotulo,
+          timestamp: Date.now(),
+          userAgent: navigator.userAgent.substring(0, 50)
+        });
+        localStorage.setItem('eventos', JSON.stringify(eventos.slice(-1000)));
+      }
+    };
 
+    // Toggle modo claro/escuro
     function toggleModo() {
       document.body.classList.toggle('modo-claro');
       const modo = document.body.classList.contains('modo-claro') ? 'claro' : 'escuro';
-    localStorage.setItem('modo', modo);
+      localStorage.setItem('modo', modo);
+      analytics.trackEvent('interface', 'toggle_modo', modo);
     }
-    
-    // Controle de seções por botões do menu
+
+    // Carregar modo salvo
+    document.addEventListener('DOMContentLoaded', () => {
+      const modoSalvo = localStorage.getItem('modo');
+      if (modoSalvo === 'claro') {
+        document.body.classList.add('modo-claro');
+      }
+    });
+
+    // Controle de seções
     const botoes = document.querySelectorAll("nav button[data-section]");
     const secoes = document.querySelectorAll(".section");
 
     botoes.forEach(botao => {
       botao.addEventListener("click", () => {
         const destino = botao.getAttribute("data-section");
+        
+        // Remove ativo de todos os botões e seções
+        botoes.forEach(b => b.classList.remove("ativo"));
         secoes.forEach(sec => sec.classList.remove("active"));
+        
+        // Ativa o botão clicado e a seção correspondente
+        botao.classList.add("ativo");
         document.getElementById(destino).classList.add("active");
+        
+        analytics.trackEvent('navegacao', 'mudar_secao', destino);
       });
     });
 
-    // Popups modais
+    // Sistema de Popups
     document.addEventListener("DOMContentLoaded", () => {
       // Botões que abrem popups
       document.querySelectorAll('button[data-popup]').forEach(btn => {
@@ -628,7 +805,7 @@
         });
       });
 
-      // Botões fechar dentro dos popups
+      // Botões fechar
       document.querySelectorAll(".popup .fechar").forEach(btn => {
         btn.addEventListener("click", () => {
           const popup = btn.closest(".popup");
@@ -636,10 +813,12 @@
         });
       });
 
-      // Fecha popup clicando fora da caixa de conteúdo
+      // Fechar clicando fora
       document.querySelectorAll(".popup").forEach(popup => {
         popup.addEventListener("click", (e) => {
-          if (e.target === popup) fecharPopup(popup.id.replace("popup-", ""));
+          if (e.target === popup) {
+            fecharPopup(popup.id.replace("popup-", ""));
+          }
         });
       });
     });
@@ -648,69 +827,231 @@
       const popup = document.getElementById(`popup-${nome}`);
       if (!popup) return console.error("Popup não encontrado:", nome);
       popup.classList.add("show");
-      document.body.style.overflow = "hidden"; // trava scroll da página
+      document.body.style.overflow = "hidden";
       popup.focus();
+      analytics.trackEvent('popup', 'abrir', nome);
     }
 
     function fecharPopup(nome) {
       const popup = document.getElementById(`popup-${nome}`);
       if (!popup) return console.error("Popup não encontrado:", nome);
       popup.classList.remove("show");
-      document.body.style.overflow = ""; // libera scroll da página
+      document.body.style.overflow = "";
+      analytics.trackEvent('popup', 'fechar', nome);
     }
 
-    // Curtida com coração animado bonito
+    // Sistema de Curtidas
     document.addEventListener("DOMContentLoaded", () => {
       const coracoes = document.querySelectorAll(".curtir-coracao");
 
-    coracoes.forEach((cora, index) => {
-      const key = `curtido_visual_noticia_${index}`;
-      const jaCurtiu = localStorage.getItem(key) === "true";
+      coracoes.forEach((coracao, index) => {
+        const key = `curtido_noticia_${index}`;
+        const jaCurtiu = localStorage.getItem(key) === "true";
 
-    if (jaCurtiu) {
-      cora.classList.add("curtido");
-    }
-    // Adicionar aos cards das notícias
-    function adicionarComentario(noticiaId, comentario) {
-      const comentarios = JSON.parse(localStorage.getItem('comentarios') || '{}');
-    if (!comentarios[noticiaId]) comentarios[noticiaId] = [];
-      comentarios[noticiaId].push({
-        texto: comentario,
-        data: new Date().toLocaleDateString('pt-BR')
-    });
-      localStorage.setItem('comentarios', JSON.stringify(comentarios));
-    }
+        if (jaCurtiu) {
+          coracao.classList.add("curtido");
+          coracao.setAttribute("data-curtida", "true");
+        }
 
-    // Para cada notícia
-    function contarVisualizacao(noticiaId) {
-      const views = JSON.parse(localStorage.getItem('views') || '{}');
-      views[noticiaId] = (views[noticiaId] || 0) + 1;
-      localStorage.setItem('views', JSON.stringify(views));
-    }
-      
-      cora.addEventListener("click", () => {
-    if (localStorage.getItem(key) === "true") return;
+        coracao.addEventListener("click", (e) => {
+          e.stopPropagation();
+          
+          if (localStorage.getItem(key) === "true") return;
 
-      cora.classList.add("curtido");
-      localStorage.setItem(key, "true");
+          coracao.classList.add("curtido");
+          coracao.setAttribute("data-curtida", "true");
+          localStorage.setItem(key, "true");
+          
+          analytics.trackEvent('interacao', 'curtir_noticia', index);
+        });
       });
     });
+
+    // Sistema de Visualizações
+    function contarVisualizacao(noticiaIndex) {
+      const views = JSON.parse(localStorage.getItem('views') || '{}');
+      views[noticiaIndex] = (views[noticiaIndex] || 0) + 1;
+      localStorage.setItem('views', JSON.stringify(views));
+      
+      // Atualizar display
+      const noticia = document.querySelectorAll('.noticia')[noticiaIndex];
+      if (noticia) {
+        const viewsSpan = noticia.querySelector('.views');
+        if (viewsSpan) {
+          viewsSpan.textContent = `${views[noticiaIndex]} visualizações`;
+        }
+        noticia.setAttribute('data-views', views[noticiaIndex]);
+      }
+      
+      analytics.trackEvent('interacao', 'visualizar_noticia', noticiaIndex);
+    }
+
+    // Adicionar cliques nas notícias para contar views
+    document.addEventListener('DOMContentLoaded', () => {
+      const noticias = document.querySelectorAll('.noticia');
+      noticias.forEach((noticia, index) => {
+        // Carregar views salvos
+        const views = JSON.parse(localStorage.getItem('views') || '{}');
+        const viewCount = views[index] || 0;
+        const viewsSpan = noticia.querySelector('.views');
+        if (viewsSpan) {
+          viewsSpan.textContent = `${viewCount} visualizações`;
+        }
+
+        // Adicionar listener para contar cliques
+        noticia.addEventListener('click', () => {
+          contarVisualizacao(index);
+        });
+      });
     });
 
-    // Sistema simples de analytics
-      const analytics = {
-      trackEvent: (categoria, acao, rotulo) => {
-      const eventos = JSON.parse(localStorage.getItem('eventos') || '[]');
-        eventos.push({
-            categoria, acao, rotulo,
-            timestamp: Date.now(),
-            userAgent: navigator.userAgent.substring(0, 50)
-        });
-      localStorage.setItem('eventos', JSON.stringify(eventos.slice(-1000)));
-    }
-};
-    
-  </script>
+    // Sistema de Filtros
+    const filtros = document.querySelectorAll('.filtros button');
+    const noticias = document.querySelectorAll('.noticia');
 
+    filtros.forEach(filtro => {
+      filtro.addEventListener('click', () => {
+        // Remove ativo de todos os filtros
+        filtros.forEach(f => f.classList.remove('ativo'));
+        filtro.classList.add('ativo');
+        
+        const categoria = filtro.getAttribute('data-filtro');
+        filtrarNoticias(categoria);
+        
+        analytics.trackEvent('filtro', 'aplicar', categoria);
+      });
+    });
+
+    function filtrarNoticias(categoria) {
+      const semResultados = document.querySelector('.sem-resultados');
+      let visiveisCount = 0;
+
+      noticias.forEach(noticia => {
+        const categorias = noticia.getAttribute('data-categoria') || '';
+        
+        if (categoria === 'todos' || categorias.includes(categoria)) {
+          noticia.classList.remove('hidden');
+          visiveisCount++;
+        } else {
+          noticia.classList.add('hidden');
+        }
+      });
+
+      // Mostrar/esconder mensagem de sem resultados
+      if (visiveisCount === 0) {
+        semResultados.style.display = 'block';
+      } else {
+        semResultados.style.display = 'none';
+      }
+    }
+
+    // Sistema de Busca
+    function buscarNoticias() {
+      const termo = document.getElementById('campoBusca').value.toLowerCase();
+      const semResultados = document.querySelector('.sem-resultados');
+      let visiveisCount = 0;
+
+      noticias.forEach(noticia => {
+        const titulo = noticia.querySelector('h3').textContent.toLowerCase();
+        const texto = noticia.querySelector('p').textContent.toLowerCase();
+        
+        if (titulo.includes(termo) || texto.includes(termo)) {
+          noticia.classList.remove('hidden');
+          visiveisCount++;
+        } else {
+          noticia.classList.add('hidden');
+        }
+      });
+
+      // Resetar filtros ativos
+      filtros.forEach(f => f.classList.remove('ativo'));
+      document.querySelector('[data-filtro="todos"]').classList.add('ativo');
+
+      // Mostrar/esconder sem resultados
+      if (visiveisCount === 0 && termo !== '') {
+        semResultados.style.display = 'block';
+      } else {
+        semResultados.style.display = 'none';
+      }
+      
+      analytics.trackEvent('busca', 'pesquisar', termo);
+    }
+
+    // Busca em tempo real
+    document.getElementById('campoBusca').addEventListener('input', (e) => {
+      if (e.target.value === '') {
+        // Se campo vazio, mostrar todas as notícias
+        noticias.forEach(noticia => noticia.classList.remove('hidden'));
+        document.querySelector('.sem-resultados').style.display = 'none';
+      }
+    });
+
+    // Enter para buscar
+    document.getElementById('campoBusca').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        buscarNoticias();
+      }
+    });
+
+    // Sistema de Compartilhamento
+    function compartilhar(plataforma) {
+      const url = window.location.href;
+      const titulo = document.title;
+      const texto = 'Confira este blog crítico sobre a política brasileira!';
+
+      let urlCompartilhar = '';
+
+      switch(plataforma) {
+        case 'whatsapp':
+          urlCompartilhar = `https://wa.me/?text=${encodeURIComponent(texto + ' ' + url)}`;
+          break;
+        case 'twitter':
+          urlCompartilhar = `https://twitter.com/intent/tweet?text=${encodeURIComponent(texto)}&url=${encodeURIComponent(url)}`;
+          break;
+        case 'facebook':
+          urlCompartilhar = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+          break;
+      }
+
+      if (urlCompartilhar) {
+        window.open(urlCompartilhar, '_blank', 'width=600,height=400');
+        analytics.trackEvent('compartilhamento', plataforma, url);
+      }
+    }
+
+    // Adicionar efeito de loading nas notícias
+    function simularCarregamento() {
+      const noticias = document.querySelectorAll('.noticia');
+      noticias.forEach((noticia, index) => {
+        setTimeout(() => {
+          noticia.classList.add('loading');
+          setTimeout(() => {
+            noticia.classList.remove('loading');
+          }, 800);
+        }, index * 100);
+      });
+    }
+
+    // Executar loading na primeira visita
+    document.addEventListener('DOMContentLoaded', () => {
+      const primeiraVisita = !localStorage.getItem('ja_visitou');
+      if (primeiraVisita) {
+        localStorage.setItem('ja_visitou', 'true');
+        setTimeout(simularCarregamento, 500);
+      }
+    });
+
+    // Keyboard navigation para acessibilidade
+    document.addEventListener('keydown', (e) => {
+      // Esc para fechar popups
+      if (e.key === 'Escape') {
+        const popupAberto = document.querySelector('.popup.show');
+        if (popupAberto) {
+          fecharPopup(popupAberto.id.replace('popup-', ''));
+        }
+      }
+    });
+
+  </script>
 </body>
 </html>
