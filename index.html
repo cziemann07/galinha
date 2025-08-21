@@ -124,10 +124,22 @@
         padding: 20px;
         transition: box-shadow 0.3s ease;
         cursor: pointer;
+        position: relative;
+        transform: translateY(0);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .noticia.loading::before {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+        animation: shimmer 1.5s infinite;
     }
 
     .noticia:hover {
         box-shadow: 0 15px 30px rgba(241,196,15,0.6);
+        transform: translateY(-5px);
     }
 
     .noticia h3 {
@@ -148,7 +160,7 @@
         color: #f1c40f;
         border-radius: 12px;
         box-shadow: 0 5px 25px rgba(241,196,15,0.3);
-        width: 1059px
+        width: min(1059px, 90%);
         
     }
 
@@ -353,6 +365,19 @@
         margin-bottom: 12px;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
     }
+    @media (max-width: 768px) {
+    .noticias {
+        grid-template-columns: 1fr;
+        grid-template-areas: 
+            "n1" "n2" "n3" "n4" "n5" "n6" "n7";
+    }
+    
+    .ministro {
+        flex-direction: column;
+        text-align: center;
+    }
+    }
+    
   </style>
 </head>
 
@@ -371,6 +396,19 @@
   </nav>
 
   <main>
+    <!-- Adicionar no topo das notícias -->
+    <div class="filtros">
+      <button data-filtro="stf">STF</button>
+      <button data-filtro="politicos">Políticos</button>
+      <button data-filtro="censura">Censura</button>
+      <button data-filtro="todos" class="ativo">Todos</button>
+    </div>
+
+    <div class="busca">
+      <input type="text" placeholder="Buscar notícias..." id="campoBusca">
+      <button onclick="buscarNoticias()">🔍</button>
+    </div>
+    
     <!-- Seção Início -->
     <section class="section active" id="inicio">
       <h2>⚠️ Notícias Recentes</h2>
@@ -519,32 +557,56 @@
   </main>
 
   <!-- Popup Ministros -->
-  <div id="popup-ministros" class="popup" role="dialog" aria-modal="true" aria-labelledby="popup-ministros-title" aria-describedby="popup-ministros-desc" tabindex="-1">
-    <div class="popup-content">
-      <button class="fechar" aria-label="Fechar popup">&times;</button>
-      <h2 id="popup-ministros-title">Detalhes dos Ministros</h2>
-      <p id="popup-ministros-desc">Uma breve apresentação sobre cada um dos verdadeiros imperadores do Brasil:</p>
-      <ul>
-        <li><strong>Gilmar Mendes: </strong> O decano que coleciona polêmicas dignas de reality show, indicado por FHC em 2002. Já faz 23 anos (aposenta só em 2030). </li>
-        <li><strong>Cármen Lúcia: </strong> Primeira mulher a presidir o STF, com postura tão independente quanto diplomática. Indicação de Lula em 2006, ou seja, 19 anos de tribunal e aposentadoria prevista só em 2029. </li>
-        <li><strong>Dias Toffoli: </strong> O ex-presidente de volta à ativa. Indicado por Lula em 2009, ou seja, já são 16 anos de tribunal; aposentadoria só em 2042. </li>
-        <li><strong>Luiz Fux: </strong> Aquele que parece ter acordado como presidente do STF em todo julgamento polêmico. Indicado por Dilma em 2011, somando 14 anos de Corte; sai só em 2028. </li>
-        <li><strong>Luís Roberto Barroso: </strong> Progressista de praxe, conhecido por puxar debates sobre direitos humanos. Vem desde 2013, indicado por Dilma; 12 anos de STF e se aposenta em 2033. </li>
-        <li><strong>Edson Fachin: </strong> Relator que virou sinônimo de Lava Jato. Indicado por Dilma em 2015, com 10 anos de Corte; aposentadoria em 2033. </li>
-        <li><strong>Alexandre de Moraes: </strong> Aquele que inventou o inquérito das fake news e virou meme jurídico. Indicado por Temer em 2017, com 8 anos de STF e aposentadoria só em 2043. </li> 
-        <li><strong>Nunes Marques: </strong> O “petista declarado” (mentira, indicado por Bolsonaro), na Corte desde 2020 – são 5 anos, e aposentadoria só em 2047. </li>
-        <li><strong>André Mendonça: </strong> O justiceiro conservador do capitólio ministerial. Indicado por Bolsonaro em 2021, com 4 anos no STF e aposentadoria também em 2047. </li>
-        <li><strong>Cristiano Zanin: </strong> A mais nova cara da Corte, ex-advogado de Lula (óbvio). Indicado por Lula em 2023, com apenas 2 anos de STF e aposentadoria em 2050. </li> 
-        <li><strong>Flávio Dino: </strong> Entra para a fama por “modernizar” o tribunal. Indicado por Lula em 2024, com só 1 ano no STF até agora, aposentando-se em 2043. </li>
-      </ul>
-    </div>
+<div id="popup-ministros" class="popup" role="dialog" aria-modal="true" aria-labelledby="popup-ministros-title" aria-describedby="popup-ministros-desc" tabindex="-1">
+  <div class="popup-content">
+    <button class="fechar" aria-label="Fechar popup">&times;</button>
+    <h2 id="popup-ministros-title">Ministros do Supremo Tribunal Federal</h2>
+    <p id="popup-ministros-desc">Composição atual da Suprema Corte brasileira (2025):</p>
+    <ul>
+      <li><strong>Gilmar Mendes:</strong> Decano da Corte, indicado por Fernando Henrique Cardoso em 2002. Aposentadoria compulsória em maio de 2030.</li>
+        
+      <li><strong>Cármen Lúcia:</strong> Primeira mulher a presidir o STF, indicada por Lula em 2006. Aposentadoria compulsória em abril de 2029.</li>
+        
+      <li><strong>Dias Toffoli:</strong> Ex-presidente do STF, indicado por Lula em 2009. Aposentadoria compulsória em novembro de 2042.</li>
+        
+      <li><strong>Luiz Fux:</strong> Próximo a se aposentar por idade, indicado por Dilma Rousseff em 2011. Aposentadoria compulsória em 2028.</li>
+        
+      <li><strong>Luís Roberto Barroso:</strong> Atual presidente do STF, indicado por Dilma Rousseff em 2013. Aposentadoria compulsória em março de 2033.</li>
+        
+      <li><strong>Edson Fachin:</strong> Relator de importantes casos da Lava Jato, indicado por Dilma Rousseff em 2015. Aposentadoria compulsória em junho de 2033.</li>
+        
+      <li><strong>Alexandre de Moraes:</strong> Conhecido pelo inquérito das fake news, indicado por Michel Temer em 2017. Aposentadoria compulsória em dezembro de 2042.</li>
+        
+      <li><strong>Kassio Nunes Marques:</strong> Indicado por Jair Bolsonaro em 2020. Aposentadoria compulsória em dezembro de 2047.</li>
+        
+      <li><strong>André Mendonça:</strong> O "terrivelmente evangélico", indicado por Jair Bolsonaro em 2021. Aposentadoria compulsória em setembro de 2047.</li>
+        
+      <li><strong>Cristiano Zanin:</strong> Ex-advogado de Lula, indicado por Lula em 2023. Aposentadoria compulsória em maio de 2050.</li>
+        
+      <li><strong>Flávio Dino:</strong> Mais recente ministro, indicado por Lula em 2024 para substituir Rosa Weber. Aposentadoria compulsória em julho de 2043.</li>
+    </ul>
+      
+    <p><small><strong>Observação:</strong> A aposentadoria compulsória no STF ocorre aos 75 anos de idade. As datas são aproximadas baseadas no aniversário de cada ministro.</small></p>
   </div>
 
+  <div class="compartilhar">
+    <button onclick="compartilhar('whatsapp')">📱</button>
+    <button onclick="compartilhar('twitter')">🐦</button>
+    <button onclick="compartilhar('facebook')">📘</button>
+  </div>
+  
   <footer>
     <p>Projeto crítico e irônico - Simulador de Liberdades no Brasil &copy; 2025</p>
   </footer>
 
   <script>
+
+    function toggleModo() {
+      document.body.classList.toggle('modo-claro');
+      const modo = document.body.classList.contains('modo-claro') ? 'claro' : 'escuro';
+    localStorage.setItem('modo', modo);
+    }
+    
     // Controle de seções por botões do menu
     const botoes = document.querySelectorAll("nav button[data-section]");
     const secoes = document.querySelectorAll(".section");
@@ -608,7 +670,24 @@
     if (jaCurtiu) {
       cora.classList.add("curtido");
     }
+    // Adicionar aos cards das notícias
+    function adicionarComentario(noticiaId, comentario) {
+      const comentarios = JSON.parse(localStorage.getItem('comentarios') || '{}');
+    if (!comentarios[noticiaId]) comentarios[noticiaId] = [];
+      comentarios[noticiaId].push({
+        texto: comentario,
+        data: new Date().toLocaleDateString('pt-BR')
+    });
+      localStorage.setItem('comentarios', JSON.stringify(comentarios));
+    }
 
+    // Para cada notícia
+    function contarVisualizacao(noticiaId) {
+      const views = JSON.parse(localStorage.getItem('views') || '{}');
+      views[noticiaId] = (views[noticiaId] || 0) + 1;
+      localStorage.setItem('views', JSON.stringify(views));
+    }
+      
       cora.addEventListener("click", () => {
     if (localStorage.getItem(key) === "true") return;
 
@@ -617,6 +696,20 @@
       });
     });
     });
+
+    // Sistema simples de analytics
+      const analytics = {
+      trackEvent: (categoria, acao, rotulo) => {
+      const eventos = JSON.parse(localStorage.getItem('eventos') || '[]');
+        eventos.push({
+            categoria, acao, rotulo,
+            timestamp: Date.now(),
+            userAgent: navigator.userAgent.substring(0, 50)
+        });
+      localStorage.setItem('eventos', JSON.stringify(eventos.slice(-1000)));
+    }
+};
+    
   </script>
 
 </body>
